@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Programming – 14-Week Competency-Based Curriculum</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-size: 14px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Header */
+  .header { background: #1a3c6e; color: white; border-radius: 10px; padding: 28px 32px; margin-bottom: 24px; }
+  .header .badge { background: rgba(255,255,255,0.2); display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; margin-bottom: 10px; }
+  .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 13px; opacity: 0.85; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { padding: 8px 18px; border-radius: 20px; border: 1.5px solid #ccc; background: white; cursor: pointer; font-size: 13px; font-weight: 600; color: #555; }
+  .tab.active { background: #1a3c6e; color: white; border-color: #1a3c6e; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Week cards */
+  .week-card { background: white; border-radius: 10px; margin-bottom: 12px; border: 1px solid #e0e0e0; overflow: hidden; }
+  .week-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; background: #f9f9f9; border-bottom: 1px solid transparent; }
+  .week-header:hover { background: #f0f4ff; }
+  .wk-num { font-size: 12px; font-weight: 700; color: #888; min-width: 56px; }
+  .wk-title { font-size: 14px; font-weight: 700; color: #1a3c6e; flex: 1; }
+  .bloom-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+  .b-remember  { background: #dbeafe; color: #1e40af; }
+  .b-understand{ background: #dcfce7; color: #166534; }
+  .b-apply     { background: #fef3c7; color: #92400e; }
+  .b-analyze   { background: #fee2e2; color: #991b1b; }
+  .b-evaluate  { background: #fce7f3; color: #9d174d; }
+  .b-create    { background: #ede9fe; color: #5b21b6; }
+  .arrow { font-size: 13px; color: #aaa; transition: transform 0.2s; }
+  .week-body { display: none; padding: 18px; }
+  .week-body.open { display: block; }
+  .week-card.open .arrow { transform: rotate(180deg); }
+  .week-card.open .week-header { border-bottom: 1px solid #e0e0e0; background: #f0f4ff; }
+
+  /* KSAB grid */
+  .ksab-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+  .ksab-box { background: #f8f8f8; border-radius: 8px; padding: 12px 14px; border-left: 3px solid #1a3c6e; }
+  .ksab-box.s { border-left-color: #16a34a; }
+  .ksab-box.a { border-left-color: #d97706; }
+  .ksab-box.bh { border-left-color: #7c3aed; }
+  .ksab-label { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #888; margin-bottom: 5px; }
+  .ksab-text { font-size: 12px; color: #444; line-height: 1.55; }
+
+  /* Outcomes */
+  .outcomes-title { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #555; margin-bottom: 8px; }
+  .outcomes-list { list-style: none; margin-bottom: 14px; }
+  .outcomes-list li { font-size: 13px; padding: 4px 0 4px 18px; position: relative; color: #333; }
+  .outcomes-list li::before { content: "›"; position: absolute; left: 4px; color: #1a3c6e; font-weight: 700; }
+
+  /* Assessment chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 10px; border-top: 1px solid #eee; }
+  .chip { font-size: 11px; padding: 3px 10px; border-radius: 10px; background: #e8eef8; color: #1a3c6e; font-weight: 600; }
+
+  /* Assessment table */
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; border: 1px solid #e0e0e0; }
+  th { background: #1a3c6e; color: white; padding: 12px 14px; text-align: left; font-size: 12px; }
+  td { padding: 11px 14px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f5f8ff; }
+  .bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .bar { height: 8px; border-radius: 4px; background: #1a3c6e; }
+  .bar-label { font-size: 12px; color: #555; min-width: 34px; }
+
+  /* Standards */
+  .std-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .std-card { background: white; border-radius: 10px; border: 1px solid #e0e0e0; padding: 18px; }
+  .std-name { font-size: 13px; font-weight: 700; color: #1a3c6e; margin-bottom: 8px; }
+  .std-desc { font-size: 12px; color: #555; line-height: 1.6; }
+
+  /* Bloom legend */
+  .bloom-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .bl-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+  .bl-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  @media (max-width: 600px) {
+    .ksab-grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">KCA University &nbsp;·&nbsp; 14 Weeks &nbsp;·&nbsp; Competency-Based Education</div>
+    <h1>🐍 Python Programming Curriculum</h1>
+    <p>Knowledge &nbsp;·&nbsp; Skills &nbsp;·&nbsp; Attitudes &nbsp;·&nbsp; Behaviour &nbsp;·&nbsp; Bloom's Revised Taxonomy &nbsp;·&nbsp; OOP</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('weekly',this)">Weekly Plan</button>
+    <button class="tab" onclick="showTab('assessment',this)">Assessment</button>
+    <button class="tab" onclick="showTab('theory',this)">Theory</button>
+    <button class="tab" onclick="showTab('standards',this)">Standards Alignment</button>
+  </div>
+
+  <!-- WEEKLY PLAN -->
+  <div class="section active" id="weekly">
+    <div class="bloom-legend">
+      <span class="bl-item"><span class="bl-dot" style="background:#3b82f6"></span>Remember</span>
+      <span class="bl-item"><span class="bl-dot" style="background:#22c55e"></span>Understand</span>
+      <span class="bl-item"><span class="bl-dot" style="background:#f59e0b"></span>Apply</span>
+      <span class="bl-item"><span class="bl-dot" style="background:#ef4444"></span>Analyze</span>
+      <span class="bl-item"><span class="bl-dot" style="background:#ec4899"></span>Evaluate</span>
+      <span class="bl-item"><span class="bl-dot" style="background:#8b5cf6"></span>Create</span>
+    </div>
+    <div id="weekCards"></div>
+  </div>
+
+  <!-- ASSESSMENT -->
+  <div class="section" id="assessment">
+    <table>
+      <thead>
+        <tr><th>Assessment</th><th>Type</th><th>Bloom's Focus</th><th>Timing</th><th>Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Weekly Lab Exercises</strong></td>
+          <td><span class="bloom-badge b-apply">Formative</span></td>
+          <td>Apply / Analyze</td><td>Weeks 1–13</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:40px"></div><span class="bar-label">20%</span></div></td>
+        </tr>
+        <tr>
+          <td><strong>Quizzes (×4)</strong></td>
+          <td><span class="bloom-badge b-understand">Formative</span></td>
+          <td>Remember / Understand</td><td>Wks 1, 3, 6, 9</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:20px"></div><span class="bar-label">10%</span></div></td>
+        </tr>
+        <tr>
+          <td><strong>Mid-Unit Assignment</strong></td>
+          <td><span class="bloom-badge b-apply">Summative</span></td>
+          <td>Apply / Analyze</td><td>Week 7</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:50px"></div><span class="bar-label">25%</span></div></td>
+        </tr>
+        <tr>
+          <td><strong>OOP Design Report</strong></td>
+          <td><span class="bloom-badge b-analyze">Summative</span></td>
+          <td>Analyze / Evaluate</td><td>Week 12</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:30px"></div><span class="bar-label">15%</span></div></td>
+        </tr>
+        <tr>
+          <td><strong>Project + Presentation</strong></td>
+          <td><span class="bloom-badge b-create">Summative</span></td>
+          <td>Create</td><td>Week 14</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:80px"></div><span class="bar-label">40%</span></div></td>
+        </tr>
+        <tr>
+          <td><strong>Theory Examination</strong></td>
+          <td><span class="bloom-badge b-evaluate">Summative</span></td>
+          <td>Remember / Understand / Evaluate</td><td>Week 14</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:120px"></div><span class="bar-label">60%</span></div></td>
+        </tr>
+        <tr>
+          <td colspan="4" style="text-align:right; font-weight:700; color:#1a3c6e;">Total</td>
+          <td><strong>100%</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- THEORY -->
+  <div class="section" id="theory">
+    <table>
+      <thead>
+        <tr><th>Topic Area</th><th>Coverage</th><th>Bloom's Focus</th><th>Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Python Fundamentals</strong><br><span style="font-size:11px;color:#777;">Syntax, data types, operators, control flow</span></td>
+          <td>Weeks 1–5</td>
+          <td>Remember / Understand</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:40px"></div><span class="bar-label">20%</span></div></td>
+        </tr>
+        <tr>
+          <td><strong>Functions, Data Structures & File/DB Handling</strong><br><span style="font-size:11px;color:#777;">Functions, scope, lists, tuples, sets, dicts, file I/O, MySQL</span></td>
+          <td>Weeks 6–9</td>
+          <td>Understand / Apply</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:50px"></div><span class="bar-label">25%</span></div></td>
+        </tr>
+        <tr>
+          <td><strong>Object-Oriented Programming</strong><br><span style="font-size:11px;color:#777;">Classes, encapsulation, inheritance, polymorphism, abstraction</span></td>
+          <td>Weeks 10–12</td>
+          <td>Analyze / Evaluate</td>
+          <td><div class="bar-wrap"><div class="bar" style="width:30px"></div><span class="bar-label">15%</span></div></td>
+        </tr>
+        <tr>
+          <td colspan="3" style="text-align:right; font-weight:700; color:#1a3c6e;">Theory Total</td>
+          <td><strong>60%</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:16px; background:white; border-radius:10px; border:1px solid #e0e0e0; padding:18px;">
+      <div class="std-name" style="margin-bottom:10px;">Theory Examination Guidelines</div>
+      <ul class="outcomes-list">
+        <li>Written examination sat in Week 14 covering all theoretical content from Weeks 1–12</li>
+        <li>Comprises short-answer, multiple-choice, and structured questions mapped to Bloom's levels</li>
+        <li>Constitutes <strong>60%</strong> of the final course grade</li>
+        <li>Students must score a minimum of 40% in the theory exam to pass the course</li>
+        <li>Open to resit once per academic year in accordance with KCA University regulations</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- STANDARDS -->
+  <div class="section" id="standards">
+    <div class="std-grid">
+      <div class="std-card">
+        <div class="std-name">ACM Computing Curricula 2023</div>
+        <div class="std-desc">PL/OOP, PL/Scripting, SE1 (software design). Weeks 10–12 map directly to ACM object-oriented programming competencies; Week 14 addresses software engineering life-cycle outcomes.</div>
+      </div>
+      <div class="std-card">
+        <div class="std-name">IEEE SWEBOK v4</div>
+        <div class="std-desc">Software construction, testing, and maintenance knowledge areas addressed in Weeks 9, 13–14. Error handling and debugging align with SWEBOK quality assurance practices.</div>
+      </div>
+      <div class="std-card">
+        <div class="std-name">Python Institute PCEP / PCAP</div>
+        <div class="std-desc">Core topics mapped: data types (Wk 3), control flow (Wks 5–6), functions (Wk 7), OOP (Wks 10–12), exception handling (Wk 13), and file I/O (Wk 9).</div>
+      </div>
+      <div class="std-card">
+        <div class="std-name">Bloom's Revised Taxonomy</div>
+        <div class="std-desc">Cognitive levels escalate: Remember/Understand (Wks 1–4) → Apply (Wks 5–9) → Analyze (Wks 8, 11–12) → Evaluate (Wk 12) → Create (Wk 14).</div>
+      </div>
+      <div class="std-card">
+        <div class="std-name">ABET Student Outcomes (CS)</div>
+        <div class="std-desc">SO1 (algorithms/structures), SO2 (design & development), SO4 (teamwork), SO6 (professional ethics) addressed across theory, lab, and mini-project components.</div>
+      </div>
+      <div class="std-card">
+        <div class="std-name">UNESCO ICT Competency Framework</div>
+        <div class="std-desc">Computational thinking (Wks 4–6, 8), collaborative creation (Wk 14 peer review), and professional communication align with UNESCO digital literacy pillars.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var weeks = [
+  { week:1, title:'Introduction to Programming & Python', bloom:'Remember', bc:'b-remember',
+    k:'What is programming, Python history & features, Python installation, IDLE/VS Code setup, running Python scripts',
+    s:'Install Python and configure VS Code/IDLE; run a Hello World script; execute basic programs from the terminal',
+    a:'Openness to disciplined coding habits; curiosity about how programs work',
+    b:'Sets up a personal coding environment; commits to running at least one program per day',
+    outcomes:['Define programming and describe Python\'s role as a high-level language','Explain how Python interprets and executes code','Run a basic Python program from both IDLE and the command line'],
+    assess:['Environment setup quiz','Lab: Run 3 simple programs']
+  },
+  { week:2, title:'Python Syntax & Output', bloom:'Remember', bc:'b-remember',
+    k:'Syntax rules, indentation significance, single- and multi-line comments, the print() function, escape sequences, f-strings',
+    s:'Write syntactically correct Python; format output using \\n, \\t, and f-strings; use comments effectively',
+    a:'Appreciation for clean, readable code; attention to detail in formatting',
+    b:'Always indents code consistently; adds comments to explain purpose before writing logic',
+    outcomes:['Identify and apply Python\'s indentation and syntax rules','Explain the purpose of comments in code documentation','Write formatted output using print(), escape sequences, and f-strings'],
+    assess:['Syntax quiz','Lab: Print personal details with formatted output']
+  },
+  { week:3, title:'Variables & Data Types', bloom:'Understand', bc:'b-understand',
+    k:'Variables and naming conventions, primitive data types (int, float, str, bool), type() function, implicit and explicit type casting',
+    s:'Declare and assign variables; identify data types at runtime; convert between types using int(), float(), str()',
+    a:'Precision mindset — understanding why data types matter for correctness and memory',
+    b:'Tests edge cases (type mismatches, invalid casts) rather than assuming code is correct',
+    outcomes:['List Python\'s core data types and give examples of each','Explain how type conversion works and when it is needed','Store and display user input using appropriate data types'],
+    assess:['Data types worksheet','Lab: Student details program']
+  },
+  { week:4, title:'Operators & Expressions', bloom:'Understand', bc:'b-understand',
+    k:'Arithmetic, assignment, comparison, and logical operators; operator precedence; expression evaluation order',
+    s:'Build arithmetic and logical expressions; apply operator precedence rules; write compound assignment statements',
+    a:'Logical thinking; patience in tracing expression evaluation order',
+    b:'Traces expressions manually before running code; tests boundary conditions',
+    outcomes:['Identify and categorise Python\'s operator types','Explain operator precedence and predict expression results','Build a simple calculator program using arithmetic and assignment operators'],
+    assess:['Operator precedence quiz','Lab: Calculator program']
+  },
+  { week:5, title:'Control Flow — Decision Making', bloom:'Apply', bc:'b-apply',
+    k:'if, elif, else statements; nested conditionals; Boolean expressions; truthy and falsy values',
+    s:'Write single, multi-branch, and nested conditional programs; trace branching logic; design decision flowcharts',
+    a:'Logical thinking; willingness to consider all possible branches before coding',
+    b:'Draws flowcharts before coding; verifies all branches are handled',
+    outcomes:['Recall the syntax of if/elif/else and write correct conditional blocks','Interpret conditions and predict program output for given inputs','Write a grade calculator that applies nested decision logic'],
+    assess:['Control-flow lab','Lab: Grade calculator']
+  },
+  { week:6, title:'Loops & Iteration', bloom:'Apply', bc:'b-apply',
+    k:'for loop, while loop, range(), break, continue, nested loops, loop counters and accumulators',
+    s:'Implement for and while loops; use break/continue; build nested loop structures; trace loop execution',
+    a:'Patience in tracing complex iteration; discipline to avoid infinite loops',
+    b:'Tests loop termination conditions manually; avoids off-by-one errors through careful tracing',
+    outcomes:['Identify the appropriate loop type for a given problem','Explain iteration and trace the execution of nested loops','Write programs that produce multiplication tables and number patterns'],
+    assess:['Loops lab','Lab: Multiplication tables & number patterns']
+  },
+  { week:7, title:'Functions & Scope', bloom:'Apply', bc:'b-apply',
+    k:'Defining and calling functions, parameters and return values, default arguments, local vs global variable scope, DRY principle',
+    s:'Define reusable functions with parameters and return values; distinguish local from global scope; apply DRY discipline',
+    a:'Appreciation of modularity; discipline to break problems into focused, single-purpose functions',
+    b:'Breaks problems into helper functions before coding; avoids global variables where possible',
+    outcomes:['Define a function and explain the role of parameters and return values','Explain the difference between local and global scope','Refactor a monolithic program into modular functions'],
+    assess:['Function design exercise','Lab: Calculator with functions']
+  },
+  { week:8, title:'Data Structures', bloom:'Analyze', bc:'b-analyze',
+    k:'Lists, tuples, sets, dictionaries — creation, indexing, common methods, mutability, and use cases; list comprehensions',
+    s:'Create and manipulate all four data structures; select the appropriate structure for a given task; use list comprehensions',
+    a:'Type-safety awareness; choosing the right structure for the task at hand',
+    b:'Documents why a particular data structure was chosen; tests edge cases (empty collections, duplicates)',
+    outcomes:['Identify Python\'s four core data structures and describe their properties','Compare lists, tuples, sets, and dictionaries and justify selection for a use case','Use each structure to implement a student records management program'],
+    assess:['Data structures comparison task','Lab: Student records with dict/list']
+  },
+  { week:9, title:'File Handling & Introduction to MySQL Database', bloom:'Apply', bc:'b-apply',
+    k:'File I/O: open/close, modes (r, w, a), reading lines, with statement. Database fundamentals: RDBMS concepts, MySQL setup, SQL basics (CREATE, INSERT, SELECT, UPDATE, DELETE), mysql-connector-python library, cursors and connection objects',
+    s:'Read from and write to text files safely using the with statement; install and connect to a MySQL database from Python; execute CRUD SQL queries using mysql-connector-python; retrieve and display query results in Python',
+    a:'Data stewardship — handling file and database resources responsibly; appreciation of structured persistent storage over flat files; security awareness around database credentials',
+    b:'Always closes file and database connections using with/finally; validates data before inserting into a database; never hard-codes credentials in source code; tests queries on sample data before integrating with main program',
+    outcomes:['Recall file open modes and explain when each is appropriate for data persistence','Explain the role of a relational database and how MySQL differs from flat-file storage','Connect a Python program to a MySQL database using mysql-connector-python and execute CRUD operations','Write a program that stores and retrieves student records using both file I/O and a MySQL database'],
+    assess:['File I/O lab','MySQL connection & CRUD lab','Lab: Student records — file vs database comparison']
+  },
+  { week:10, title:'Introduction to OOP', bloom:'Understand', bc:'b-understand',
+    k:'OOP paradigm vs procedural, classes and objects, __init__() constructor, instance attributes and methods, self keyword',
+    s:'Design and instantiate custom classes; define constructors; add instance methods; apply encapsulation basics',
+    a:'Shift from procedural to object-oriented thinking; valuing data organisation through classes',
+    b:'Models real-world entities as classes before writing code; reviews class designs with peers',
+    outcomes:['Define the terms class and object and explain their relationship','Explain OOP concepts including encapsulation, inheritance, and polymorphism','Create a simple Student class with attributes and methods using __init__()'],
+    assess:['OOP concepts quiz','Lab: Create a Student class']
+  },
+  { week:11, title:'OOP — Encapsulation & Inheritance', bloom:'Analyze', bc:'b-analyze',
+    k:'Private variables (name mangling), getters and setters, inheritance with extends (super()), method resolution order',
+    s:'Implement private attributes with getters/setters; build class hierarchies using inheritance; use super() correctly',
+    a:'Appreciation of code reuse; openness to refactoring designs to reduce duplication',
+    b:'Identifies inappropriate data exposure; proposes encapsulation fixes; reviews inheritance hierarchies with peers',
+    outcomes:['Identify OOP principles and describe how each supports good design','Explain encapsulation and implement it using private attributes and accessor methods','Design and implement an inheritance hierarchy (Person → Student → Teacher)'],
+    assess:['Class hierarchy lab','Lab: Person → Student → Teacher hierarchy']
+  },
+  { week:12, title:'OOP — Polymorphism & Abstraction', bloom:'Analyze', bc:'b-analyze',
+    k:'Method overriding, polymorphism, abstract classes (ABC module), abstract methods, base vs child class behaviour',
+    s:'Override methods in child classes; demonstrate polymorphic dispatch; implement abstract base classes using ABC',
+    a:'Appreciation of flexible, extensible design; intellectual curiosity about runtime behaviour',
+    b:'Compares base and child class behaviour through testing; documents design decisions in class diagrams',
+    outcomes:['Define polymorphism and explain how method overriding achieves it','Explain abstraction and implement abstract classes using Python\'s ABC module','Compare base class and child class behaviour for a Shape → Circle, Rectangle hierarchy'],
+    assess:['Polymorphism design report','Lab: Shape → Circle & Rectangle']
+  },
+  { week:13, title:'Error Handling & Modules', bloom:'Apply', bc:'b-apply',
+    k:'Exception types, try/except/finally, raising exceptions, custom exception classes, importing built-in and third-party modules',
+    s:'Wrap risky code in try/except; create and raise custom exceptions; import and use standard library modules',
+    a:'Resilience mindset — defensive programming and input validation as professional standards',
+    b:'Writes tests for failure paths, not just happy paths; validates all user inputs before processing',
+    outcomes:['Identify common Python exception types and describe their causes','Explain exception flow through try/except/finally blocks','Implement robust input validation using custom exceptions and module imports'],
+    assess:['Exception handling lab','Lab: Input validation program']
+  },
+  { week:14, title:'Project Presentation & Evaluation', bloom:'Create', bc:'b-create',
+    k:'Software development lifecycle, problem decomposition, system design, clean code principles, OOP applied end-to-end',
+    s:'Design, build, test, and present a complete Python system applying OOP, file handling, and error handling',
+    a:'Professional pride in delivering a well-structured, tested, and documented system',
+    b:'Plans the system with pseudocode and class diagrams first; tests all features before presenting; presents work clearly',
+    outcomes:['Analyse a real-world problem and design a modular Python solution','Evaluate the design and implementation of the solution against requirements','Create a fully functional Python system (Student Management, Inventory, or Voting System)'],
+    assess:['Project (40%)','Technical presentation','Peer code review']
+  }
+];
+
+var container = document.getElementById('weekCards');
+weeks.forEach(function(w, i) {
+  var div = document.createElement('div');
+  div.className = 'week-card';
+  div.innerHTML =
+    '<div class="week-header" onclick="toggle(' + i + ')">' +
+      '<span class="wk-num">Week ' + w.week + '</span>' +
+      '<span class="wk-title">' + w.title + '</span>' +
+      '<span class="bloom-badge ' + w.bc + '">' + w.bloom + '</span>' +
+      '<span class="arrow" id="arrow' + i + '">▼</span>' +
+    '</div>' +
+    '<div class="week-body" id="body' + i + '">' +
+      '<div class="ksab-grid">' +
+        '<div class="ksab-box"><div class="ksab-label">KNOWLEDGE</div><div class="ksab-text">' + w.k + '</div></div>' +
+        '<div class="ksab-box s"><div class="ksab-label">SKILLS</div><div class="ksab-text">' + w.s + '</div></div>' +
+        '<div class="ksab-box a"><div class="ksab-label">ATTITUDES</div><div class="ksab-text">' + w.a + '</div></div>' +
+        '<div class="ksab-box bh"><div class="ksab-label">BEHAVIOUR</div><div class="ksab-text">' + w.b + '</div></div>' +
+      '</div>' +
+      '<div class="outcomes-title">LEARNING OUTCOMES</div>' +
+      '<ul class="outcomes-list">' + w.outcomes.map(function(o){ return '<li>' + o + '</li>'; }).join('') + '</ul>' +
+      '<div class="chips">' + w.assess.map(function(a){ return '<span class="chip">' + a + '</span>'; }).join('') + '</div>' +
+    '</div>';
+  container.appendChild(div);
+});
+
+function toggle(i) {
+  var body = document.getElementById('body' + i);
+  var card = body.parentElement;
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  card.classList.toggle('open', !open);
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
